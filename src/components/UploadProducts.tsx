@@ -155,9 +155,10 @@ export function UploadProdutos() {
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6">Importar Produtos</h1>
 
-      <div className="bg-white p-6 rounded-2xl shadow-lg">
+      <div className="flex justify-between gap-5 bg-white p-6 rounded-2xl shadow-lg">
         <input
           type="file"
+          placeholder="Clique aqui para selecionar um arquivo"
           accept=".xlsx,.xls,.csv"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           className="mb-4"

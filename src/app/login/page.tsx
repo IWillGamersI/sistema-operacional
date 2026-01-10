@@ -78,7 +78,7 @@ export default function LoginPage() {
 
           <button
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition cursor-pointer"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
@@ -87,15 +87,7 @@ export default function LoginPage() {
     </div>
   );
 }
-/*
-// Função pura, sem efeitos colaterais no render
-function redirectByRole(role: string, router: any) {
-  if (role === "DEV") router.push("/dev/users");
-  else if (role === "ADMIN") router.push("/admin");
-  else if (role === "OPERACIONAL") router.push("/operacional"); 
-  else router.push("/");
-}
-*/
+
 function redirectByRole(role: string, router: any) {
   if (["DEV", "ADMIN", "OPERACIONAL", "PRODUCAO", "EXPEDICAO"].includes(role)) {
     router.push("/admin");

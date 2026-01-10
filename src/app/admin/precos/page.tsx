@@ -13,6 +13,8 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
+import { resolve } from 'path';
+import { rejects } from 'assert';
 
 /* =======================
    INTERFACES
@@ -103,6 +105,15 @@ export default function Precos() {
         }));
         setTabelas(lista);
     };
+
+    const loadImage = (src:string) : Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject)=> {
+            const img = new Image()
+            img.src = src
+            img.onload = () => resolve(img)
+            img.onerror = reject
+        })
+    }
 
     const syncTabelaFirebase = async (tabela: TabelaPreco) => {
         const snap = await getDocs(collection(db, 'tabelas'));
@@ -226,31 +237,42 @@ export default function Precos() {
             alert('Selecione um cliente');
             return;
         }
-
+       
         const pdf = new jsPDF();
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
-        let yPosition = 5;
+
+        const logo = await loadImage('/logo.png')
+        const logoWith = 20
+        const logoHeight = 20        
+        
+        pdf.addImage(logo, 'PNG', 180,2.5, logoWith, logoHeight)
+        let yPosition = 15;
 
         pdf.setFontSize(16);
         pdf.text(`Tabela de Preço`, 10, yPosition);
         pdf.setFontSize(12);
-        pdf.text(`Cliente: ${nomeCliente}`, 10, yPosition + 7);
-        yPosition += 12;
+        pdf.text(`Cliente: ${nomeCliente}`, 10, yPosition + 5);
+        yPosition += 10;
+        
 
         pdf.line(10, yPosition, pageWidth - 10, yPosition);
         yPosition += 5;
-
+        
         const headers = ['Código', 'EAN', 'Nome', 'Valor Venda'];
-        const columnWidths = [30, 40, 100, 20];
-
+        const columnWidths = [30, 40, 95, 20];
+        
+        yPosition += 2;
+        pdf.line(10, yPosition + 4, pageWidth - 10, yPosition + 4);
+        
+        
         let x = 10;
         headers.forEach((h, i) => {
             pdf.text(h, x, yPosition);
             x += columnWidths[i];
         });
 
-        yPosition += 5;
+        yPosition += 10;
 
         tabela.produtos.forEach(p => {
             const info = produtosMap.get(p.codigo);
@@ -264,9 +286,10 @@ export default function Precos() {
 
             x = 10;
             row.forEach((cell, i) => {
-                pdf.text(cell, x, yPosition);
+                pdf.text(String(cell), x, yPosition);
                 x += columnWidths[i];
             });
+
 
             yPosition += 8;
             if (yPosition > pageHeight - 20) {
